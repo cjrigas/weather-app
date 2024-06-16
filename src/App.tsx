@@ -5,6 +5,7 @@ import SearchInput from '@components/SearchInput/SearchInput'
 import SearchResultsList from '@/components/SearchResultsList/SearchResultsList'
 import RecentsList from '@/components/RecentsList/RecentsList'
 import CurrentWeather from '@/components/CurrentWeather/CurrentWeather'
+import FavouritesList from '@/components/FavouritesList/FavouritesList'
 import { useLazyCurrentQuery, useSearchQuery } from '@/services/weatherapi'
 import { SearchResponse } from '@/services/weatherapi/types'
 import useDebounce from '@/hooks/useDebounce'
@@ -15,6 +16,7 @@ const App = () => {
   const dispatch = useDispatch()
 
   const recentItems = useSelector((state: RootState) => state.savedItems.recent)
+  const favouriteItems = useSelector((state: RootState) => state.savedItems.favourites)
 
   const [currentLocation, seCurrentLocation] = useState<SearchResponse['0'] & { key: string, text: string }>()
   const isFavourite = useSelector((state) => selectIsFavourite(state, currentLocation))
@@ -86,6 +88,7 @@ const App = () => {
             { (isFocused && searchQuery.length > 2 && listItems) && <SearchResultsList<SearchResponse['0'] & { key: string, text: string }> className="absolute bg-slate-100" items={listItems} onItemClick={onItemClick} /> }
           </div>
         </div>
+        { favouriteItems.length > 0 && <FavouritesList items={favouriteItems} onItemClick={onItemClick} /> }
         { currentWeatherData && <CurrentWeather data={currentWeatherData} onFavouriteClicked={onFavouriteClicked} isFavourite={isFavourite} /> }
       </div>
     </div>
