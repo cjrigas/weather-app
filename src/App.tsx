@@ -58,10 +58,10 @@ const App = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-screen h-screen">
-      <h1 className="mt-0 mb-2 text-6xl font-normal leading-normal text-[#fff4a8]">Weather App</h1>
-      <div className="mb-2 text-base text-white">Enter a city to see weather details</div>
-      <div className="container flex flex-col items-center justify-center">
+    <div className="">
+      <div className='container flex flex-col items-center justify-center mx-auto mt-16'>
+        <h1 className="mt-0 mb-2 text-6xl font-normal leading-normal text-[#fff4a8]">Weather App</h1>
+        <div className="mb-2 text-base text-white">Enter a city to see weather details</div>
         <div className="w-[500px]">
           <SearchSection
             className='w-full'
@@ -70,9 +70,11 @@ const App = () => {
             onSearchItemClick={onSearchItemClick}
             onRecentItemClick={onItemClick}
           />
-          { favouriteItems.length > 0 && <FavouritesList<ListItem> items={favouriteItems} onItemClick={onItemClick} /> }
+          <div className='absolute left-0 w-full'>
+            { favouriteItems.length > 0 && <FavouritesList<ListItem> items={favouriteItems} onItemClick={onItemClick} /> }
+          </div>
         </div>
-        { currentWeatherData && <CurrentWeather data={currentWeatherData} onFavouriteClicked={onFavouriteClicked} isFavourite={isFavourite} /> }
+        { currentWeatherData && <CurrentWeather className='mt-32 mb-24' data={currentWeatherData} onFavouriteClicked={onFavouriteClicked} isFavourite={isFavourite} /> }
       </div>
     </div>
   )

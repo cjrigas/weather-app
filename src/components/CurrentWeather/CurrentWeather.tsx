@@ -4,7 +4,7 @@ import { CurrentWeatherProps } from './types'
 
 const CurrentWeather = ({ className, data, isFavourite, onFavouriteClicked, ...props }: CurrentWeatherProps) => {
   return (
-    <div className={twMerge('relative mt-40 bg-black bg-opacity-40 p-20 rounded-lg', className)} {...props}>
+    <div className={twMerge('relative bg-black bg-opacity-40 p-20 rounded-lg', className)} {...props}>
       <button title='add to favourites' className='absolute flex flex-row top-5 right-5 active:opacity-55' onClick={onFavouriteClicked}>
         <div className='w-8 h-8'>
           <svg width="100%" height="100%" viewBox="0 0 25 22" fill="none" xmlns="http://www.w3.org/2000/svg">
