@@ -1,8 +1,10 @@
 import { twMerge } from 'tailwind-merge'
 
-const SearchInput = ({ className, ...props }: React.ComponentProps<"input">) => {
+import { SearchInputProps } from './types'
+
+const SearchInput = ({ className, onFocusChanged, ...props }: SearchInputProps) => {
   return (
-    <input className={twMerge('outline-none py-4 px-3 text-gray-700', className)} {...props} />
+    <input className={twMerge('outline-none py-4 px-3 text-gray-700', className)} onFocus={() => onFocusChanged(true)} onBlur={() => onFocusChanged(false)} {...props} />
   )
 }
 
