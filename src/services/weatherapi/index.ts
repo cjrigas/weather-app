@@ -24,5 +24,5 @@ export const weatherApi = createApi({
 export const {
   useSearchQuery,
   useCurrentQuery,
-  useLazySearchQuery,
+  useLazyCurrentQuery,
 } = weatherApi

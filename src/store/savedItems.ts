@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice, createSelector } from '@reduxjs/toolkit'
 
 export interface SavedItemsInitialState<T> {
   recent: T[]
@@ -18,13 +18,23 @@ const savedItemsSlice = createSlice({
       state.recent = [...state.recent, action.payload]
     },
     addToFavourites: (state, action: PayloadAction<any>) => {
-      state.recent = [...state.favourites, action.payload]
+      const itemExists = state.favourites.some(item => item.id === action.payload.id)
+      if (!itemExists) {
+        state.favourites = [...state.favourites, action.payload]
+      }
     },
     clearAllRecent: (state) => {
       state.recent = []
     },
   },
-});
+})
+
+const selectFavourites = (state: any) => state.savedItems.favourites
+
+export const selectIsFavourite = createSelector(
+  [selectFavourites, (_, item) => item?.id],
+  (items, itemId) =>  Boolean(itemId && items.find((item: any) => item.id === itemId))
+)
 
 export const { addToRecent, addToFavourites, clearAllRecent } = savedItemsSlice.actions
 export default savedItemsSlice.reducer

@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import SearchInput from '@components/SearchInput/SearchInput'
 import SearchResultsList from '@/components/SearchResultsList/SearchResultsList'
 import RecentsList from '@/components/RecentsList/RecentsList'
+import CurrentWeather from '@/components/CurrentWeather/CurrentWeather'
 import { useLazyCurrentQuery, useSearchQuery } from '@/services/weatherapi'
 import { SearchResponse } from '@/services/weatherapi/types'
 import useDebounce from '@/hooks/useDebounce'
-import { addToRecent, clearAllRecent } from '@/store/savedItems'
+import { addToRecent, clearAllRecent, addToFavourites, selectIsFavourite } from '@/store/savedItems'
 import { RootState } from '@/store'
 
 const App = () => {
@@ -15,14 +16,36 @@ const App = () => {
 
   const recentItems = useSelector((state: RootState) => state.savedItems.recent)
 
+  const [currentLocation, seCurrentLocation] = useState<SearchResponse['0'] & { key: string, text: string }>()
+  const isFavourite = useSelector((state) => selectIsFavourite(state, currentLocation))
+
   const [isFocused, setIsFocused] = useState(false)
 
   const [searchQuery, setSearchQuery] = useState<string>('')
   const debouncedSearchQuery = useDebounce(searchQuery, 500)
 
   const { data: searchResults } = useSearchQuery(debouncedSearchQuery, { skip: debouncedSearchQuery.length < 3 })
+  const [trigger, { data: currentWeather }] = useLazyCurrentQuery()
 
   const listItems = useMemo(() => searchResults?.map(item => ({ key: `${item.id}`, text: `${item.name}, ${item.region} | ${item.country}`, ...item })), [searchResults])
+
+  const currentWeatherData = useMemo(() => {
+    if (!currentWeather) return
+    const { location, current } = currentWeather
+    return {
+      location: `${location.name}, ${location.region} | ${location.country}`,
+      condition: current.condition.text,
+      icon: current.condition.icon,
+      values: {
+        Temperature: `${current.temp_c} °C`,
+        Wind_Speed: `${current.wind_kph} km/h`,
+        Wind_Direction: current.wind_dir,
+        Humidity: `${current.humidity} %`,
+        Precipitation: `${current.precip_mm} mm`,
+        UV_Index: `${current.uv}`,
+      },
+    }
+  }, [currentWeather])
 
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value)
@@ -39,10 +62,16 @@ const App = () => {
   const onItemClick = (item: SearchResponse['0'] & { key: string, text: string }) => {
     setSearchQuery('')
     dispatch(addToRecent(item))
+    trigger({ city: `id:${item.id}`, aqi: 'no' })
+      .then(_ => seCurrentLocation(item))
   }
 
   const onClearClicked = () => {
     dispatch(clearAllRecent())
+  }
+
+  const onFavouriteClicked = () => {
+    dispatch(addToFavourites(currentLocation))
   }
 
   return (
@@ -57,6 +86,7 @@ const App = () => {
             { (isFocused && searchQuery.length > 2 && listItems) && <SearchResultsList<SearchResponse['0'] & { key: string, text: string }> className="absolute bg-slate-100" items={listItems} onItemClick={onItemClick} /> }
           </div>
         </div>
+        { currentWeatherData && <CurrentWeather data={currentWeatherData} onFavouriteClicked={onFavouriteClicked} isFavourite={isFavourite} /> }
       </div>
     </div>
   )
