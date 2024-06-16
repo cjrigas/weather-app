@@ -1,30 +1,75 @@
-# React + TypeScript + Vite
+# Weather App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A weather application built with Vite, TypeScript, React, Tailwind and Redux/RTK-Query. This app allows users to search for weather information by city and manage their favorite locations.
 
-Currently, two official plugins are available:
+## Table of Contents
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [Running the App](#running-the-app)
+- [Building the App](#building-the-app)
+- [Project Structure](#project-structure)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- Search for weather information by city.
+- View current weather conditions.
+- Add cities to favorites.
+- View recent searches.
 
-## Expanding the ESLint configuration
+## Prerequisites
+- [Node.js](https://nodejs.org/) (version 18 or higher)
+- [npm](https://www.npmjs.com/)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Installation
 
-- Configure the top-level `parserOptions` property like this:
+1. Clone the repository:
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+git clone https://github.com/cjrigas/weather-app.git
+cd weather-app
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+## Environment Variables
+
+Before running the app, you need to set up your environment variables. Copy the .env.example file to a new file named .env and fill in the required values.
+
+```bash
+cp .env.example .env
+```
+
+## Running the App
+
+To start the development server, run
+
+```bash
+npm run dev
+```
+
+## Building the App
+
+To build the app for production, run:
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+```bash
+src/
+├── assets/          # Static assets (images, fonts, etc.)
+├── components/      # Reusable components
+├── hooks/           # Custom hooks
+├── services/        # API services
+├── store/           # Redux store and slices
+├── App.tsx          # Main app component
+├── index.css        # Global styles
+├── main.tsx         # Entry point
+```
