@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import SearchSection from '@/components/SearchSection/SearchSection'
@@ -28,24 +28,6 @@ const App = () => {
   }, [])
 
   const errorMessage = (searchError || currentWeatherError)?.data?.error?.message
-
-  const currentWeatherData = useMemo(() => {
-    if (!currentWeather) return
-    const { location, current } = currentWeather
-    return {
-      location: `${location.name}${location.region ? `, ${location.region}` : ''} | ${location.country}`,
-      condition: current.condition.text,
-      icon: current.condition.icon,
-      values: {
-        Temperature: `${current.temp_c} °C`,
-        Wind_Speed: `${current.wind_kph} km/h`,
-        Wind_Direction: current.wind_dir,
-        Humidity: `${current.humidity} %`,
-        Precipitation: `${current.precip_mm} mm`,
-        UV_Index: `${current.uv}`,
-      },
-    }
-  }, [currentWeather])
 
   const onSearchItemClick = useCallback((item: ListItem) => {
     setSearchQuery('')
@@ -83,7 +65,7 @@ const App = () => {
             { favouriteItems.length > 0 && <FavouritesList<ListItem> items={favouriteItems} onItemClick={onItemClick} /> }
           </div>
         </div>
-        { (!currentWeatherError && currentWeatherData) && <CurrentWeather className='mt-32 mb-24' data={currentWeatherData} onFavouriteClicked={onFavouriteClicked} isFavourite={isFavourite} /> }
+        { (!currentWeatherError && currentWeather) && <CurrentWeather className='mt-32 mb-24' data={currentWeather} onFavouriteClicked={onFavouriteClicked} isFavourite={isFavourite} /> }
       </div>
     </div>
   )
