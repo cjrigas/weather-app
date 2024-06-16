@@ -12,13 +12,15 @@ import useDebounce from '@/hooks/useDebounce'
 import { addToRecent, clearAllRecent, addToFavourites, selectIsFavourite } from '@/store/savedItems'
 import { RootState } from '@/store'
 
+type ListItem = SearchResponse['0'] & { key: string, text: string }
+
 const App = () => {
   const dispatch = useDispatch()
 
   const recentItems = useSelector((state: RootState) => state.savedItems.recent)
   const favouriteItems = useSelector((state: RootState) => state.savedItems.favourites)
 
-  const [currentLocation, seCurrentLocation] = useState<SearchResponse['0'] & { key: string, text: string }>()
+  const [currentLocation, seCurrentLocation] = useState<ListItem>()
   const isFavourite = useSelector((state) => selectIsFavourite(state, currentLocation))
 
   const [isFocused, setIsFocused] = useState(false)
@@ -35,7 +37,7 @@ const App = () => {
     if (!currentWeather) return
     const { location, current } = currentWeather
     return {
-      location: `${location.name}, ${location.region} | ${location.country}`,
+      location: `${location.name}${location.region ? `, ${location.region}` : ''} | ${location.country}`,
       condition: current.condition.text,
       icon: current.condition.icon,
       values: {
@@ -61,12 +63,18 @@ const App = () => {
     setTimeout(() => setIsFocused(false), 100)
   }, [])
 
-  const onItemClick = (item: SearchResponse['0'] & { key: string, text: string }) => {
+  const onSearchItemClick = useCallback((item: ListItem) => {
     setSearchQuery('')
-    dispatch(addToRecent(item))
+    dispatch(addToRecent({ ...item, key: `${Date.now()}` }))
     trigger({ city: `id:${item.id}`, aqi: 'no' })
       .then(_ => seCurrentLocation(item))
-  }
+  }, [])
+
+  const onItemClick = useCallback((item: ListItem) => {
+    setSearchQuery('')
+    trigger({ city: `id:${item.id}`, aqi: 'no' })
+      .then(_ => seCurrentLocation(item))
+  }, [])
 
   const onClearClicked = () => {
     dispatch(clearAllRecent())
@@ -84,11 +92,11 @@ const App = () => {
         <div className="grid grid-cols-6 gap-4">
           <div className="relative col-span-2 col-start-3 shadow-2xl shadow-black">
             <SearchInput className="w-full" placeholder="eg Athens" value={searchQuery} onChange={onChange} onFocus={onFocus} onBlur={onBlur} />
-            { (isFocused && searchQuery == '' && recentItems.length > 0) && <RecentsList<SearchResponse['0'] & { key: string, text: string }> className="absolute bg-slate-100" items={recentItems} onItemClick={onItemClick} onClearClicked={onClearClicked} /> }
-            { (isFocused && searchQuery.length > 2 && listItems) && <SearchResultsList<SearchResponse['0'] & { key: string, text: string }> className="absolute bg-slate-100" items={listItems} onItemClick={onItemClick} /> }
+            { (isFocused && searchQuery == '' && recentItems.length > 0) && <RecentsList<ListItem> className="absolute bg-slate-100" items={recentItems} onItemClick={onItemClick} onClearClicked={onClearClicked} /> }
+            { (isFocused && searchQuery.length > 2 && listItems) && <SearchResultsList<ListItem> className="absolute bg-slate-100" items={listItems} onItemClick={onSearchItemClick} /> }
           </div>
         </div>
-        { favouriteItems.length > 0 && <FavouritesList items={favouriteItems} onItemClick={onItemClick} /> }
+        { favouriteItems.length > 0 && <FavouritesList<ListItem> items={favouriteItems} onItemClick={onItemClick} /> }
         { currentWeatherData && <CurrentWeather data={currentWeatherData} onFavouriteClicked={onFavouriteClicked} isFavourite={isFavourite} /> }
       </div>
     </div>

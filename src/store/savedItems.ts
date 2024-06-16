@@ -15,7 +15,7 @@ const savedItemsSlice = createSlice({
   initialState,
   reducers: {
     addToRecent: (state, action: PayloadAction<any>) => {
-      state.recent = [...state.recent, action.payload]
+      state.recent = [...state.recent, action.payload].sort((a, b) => b.key - a.key)
     },
     addToFavourites: (state, action: PayloadAction<any>) => {
       const itemExists = state.favourites.some(item => item.id === action.payload.id)
