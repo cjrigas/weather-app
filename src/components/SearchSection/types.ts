@@ -7,4 +7,5 @@ export interface SearchSectionProps extends  React.ComponentProps<"div"> {
   onValueChange: (value: string) => void
   onSearchItemClick: (item: ListItem) => void
   onRecentItemClick: (item: ListItem) => void
+  onError: (error: any) => void
 }

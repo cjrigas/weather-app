@@ -14,7 +14,7 @@ export const weatherApi = createApi({
       query: (city) => `/search.json?key=${key}&q=${city}`,
     }),
     current: builder.query<CurrentWeatherResponse, { city: string, aqi: 'yes' | 'no' }>({
-      query: ({ city, aqi }) => `current.json?key=${key}&q=${city}&aqi=${aqi}`,
+      query: ({ city, aqi }) => `/current.json?key=${key}&q=${city}&aqi=${aqi}`,
     }),
   }),
 })

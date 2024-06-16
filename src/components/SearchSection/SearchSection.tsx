@@ -12,14 +12,18 @@ import { useSearchQuery } from '@/services/weatherapi'
 
 import { ListItem, SearchSectionProps } from './types'
 
-const SearchSection = ({ inputValue, onValueChange, onRecentItemClick, onSearchItemClick, className, ...props }: SearchSectionProps) => {
+const SearchSection = ({ inputValue, onValueChange, onRecentItemClick, onSearchItemClick, onError, className, ...props }: SearchSectionProps) => {
   const dispatch = useDispatch()
   const recentItems = useSelector((state: RootState) => state.savedItems.recent)
   
   const [isFocused, setIsFocused] = useState(false)
   
   const debouncedSearchQuery = useDebounce(inputValue, 500)
-  const { data: searchResults } = useSearchQuery(debouncedSearchQuery, { skip: debouncedSearchQuery.length < 3 })
+  const { data: searchResults, error: searchError } = useSearchQuery(debouncedSearchQuery, { skip: debouncedSearchQuery.length < 3 })
+
+  React.useEffect(() => {
+    if (searchError) onError(searchError)
+  }, [searchError])
   
   const listItems = useMemo(() => searchResults?.map(item => ({ key: `${item.id}`, text: `${item.name}, ${item.region} | ${item.country}`, ...item })), [searchResults])
   
